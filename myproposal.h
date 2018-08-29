@@ -121,7 +121,8 @@
 	"aes128-ctr,aes192-ctr,aes256-ctr" \
 	AESGCM_CIPHER_MODES
 
-#define KEX_CLIENT_ENCRYPT KEX_SERVER_ENCRYPT
+#define KEX_CLIENT_ENCRYPT KEX_SERVER_ENCRYPT "," \
+	"aes128-cbc,aes192-cbc,aes256-cbc"
 
 #define KEX_SERVER_MAC \
 	"umac-64-etm@openssh.com," \
