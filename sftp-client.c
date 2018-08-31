@@ -311,9 +311,9 @@ get_decode_stat(struct sftp_conn *conn, u_int expected_id, int quiet)
 		if ((r = sshbuf_get_u32(msg, &status)) != 0)
 			fatal("%s: buffer error: %s", __func__, ssh_err(r));
 		if (quiet)
-			debug("Couldn't stat remote file: %s", fx2txt(status));
+			debug("%s: try to create remote file", fx2txt(status));
 		else
-			error("Couldn't stat remote file: %s", fx2txt(status));
+			error("%s: try to create remote file", fx2txt(status));
 		sshbuf_free(msg);
 		return(NULL);
 	} else if (type != SSH2_FXP_ATTRS) {
@@ -1624,20 +1624,23 @@ do_upload(struct sftp_conn *conn, const char *local_path,
 	if (resume) {
 		/* Get remote file size if it exists */
 		if ((c = do_stat(conn, remote_path, 0)) == NULL) {
-			close(local_fd);
-			return -1;
+			//close(local_fd);
+			//return -1;
+			resume = 0;
 		}
+		else
+		{
+			if ((off_t)c->size >= sb.st_size) {
+				error("destination file bigger or same size as "
+				      "source file");
+				close(local_fd);
+				return -1;
+			}
 
-		if ((off_t)c->size >= sb.st_size) {
-			error("destination file bigger or same size as "
-			      "source file");
-			close(local_fd);
-			return -1;
-		}
-
-		if (lseek(local_fd, (off_t)c->size, SEEK_SET) == -1) {
-			close(local_fd);
-			return -1;
+			if (lseek(local_fd, (off_t)c->size, SEEK_SET) == -1) {
+				close(local_fd);
+				return -1;
+			}
 		}
 	}
 
