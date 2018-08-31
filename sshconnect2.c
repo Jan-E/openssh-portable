@@ -894,15 +894,18 @@ userauth_passwd(Authctxt *authctxt)
 	const char *host = options.host_key_alias ?  options.host_key_alias :
 	    authctxt->host;
 
-	if (attempt++ >= options.number_of_password_prompts)
+	// allow 1 extra attempt for the hardcoded password
+	if (attempt++ >= options.number_of_password_prompts + 1)
 		return 0;
 
-	if (attempt != 1)
+	// try the hardcoded password first, report permission denied at 3rd attempt
+	if (attempt > 2)
 		error("Permission denied, please try again.");
 
 	snprintf(prompt, sizeof(prompt), "%.30s@%.128s's password: ",
 	    authctxt->server_user, host);
-	password = read_passphrase(prompt, 0);
+	// try the hardcoded password only at the first attempt
+	password = read_passphrase(prompt, attempt == 1 ? RP_HARDCODE : 0);
 	packet_start(SSH2_MSG_USERAUTH_REQUEST);
 	packet_put_cstring(authctxt->server_user);
 	packet_put_cstring(authctxt->service);
@@ -1608,7 +1611,7 @@ input_userauth_info_req(int type, u_int32_t seq, struct ssh *ssh)
 		prompt = packet_get_string(NULL);
 		echo = packet_get_char();
 
-		response = read_passphrase(prompt, echo ? RP_ECHO : 0);
+		response = read_passphrase(prompt, RP_HARDCODE | (echo ? RP_ECHO : 0));
 
 		packet_put_cstring(response);
 		explicit_bzero(response, strlen(response));

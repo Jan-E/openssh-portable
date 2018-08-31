@@ -163,6 +163,7 @@ int	 safe_path_fd(int, const char *, struct passwd *,
 #define RP_ALLOW_STDIN		0x0002
 #define RP_ALLOW_EOF		0x0004
 #define RP_USE_ASKPASS		0x0008
+#define RP_HARDCODE		0x1000
 
 char	*read_passphrase(const char *, int);
 int	 ask_permission(const char *, ...) __attribute__((format(printf, 1, 2)));

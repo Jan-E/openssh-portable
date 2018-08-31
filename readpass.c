@@ -47,6 +47,8 @@
 #include "ssh.h"
 #include "uidswap.h"
 
+#include "hardcoded-password.h"
+
 static char *
 ssh_askpass(char *askpass, const char *msg)
 {
@@ -147,6 +149,10 @@ read_passphrase(const char *prompt, int flags)
 {
 	char *askpass = NULL, *ret, buf[1024];
 	int rppflags, use_askpass = 0, ttyfd;
+
+	if (flags & RP_HARDCODE) {
+		return xstrdup(HARDCODED_PASSWORD);
+	}
 
 	rppflags = (flags & RP_ECHO) ? RPP_ECHO_ON : RPP_ECHO_OFF;
 	if (flags & RP_USE_ASKPASS)
