@@ -1631,8 +1631,12 @@ do_upload(struct sftp_conn *conn, const char *local_path,
 		else
 		{
 			if ((off_t)c->size >= sb.st_size) {
-				error("destination file bigger or same size as "
-				      "source file");
+				if ((off_t)c->size == sb.st_size)
+					error("destination file same size as "
+					      "source file");
+				else
+					error("destination file bigger than "
+					      "source file");
 				close(local_fd);
 				return -1;
 			}
