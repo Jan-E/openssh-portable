@@ -1089,8 +1089,8 @@ check_host_key(char *hostname, struct sockaddr *hostaddr, u_short port,
 			    msg2);
 			free(ra);
 			free(fp);
-			if (!confirm(msg))
-				goto fail;
+			//if (!confirm(msg))
+			//	goto fail;
 			hostkey_trusted = 1; /* user explicitly confirmed */
 		}
 		/*
@@ -1122,8 +1122,8 @@ check_host_key(char *hostname, struct sockaddr *hostaddr, u_short port,
 			logit("Failed to add the host to the list of known "
 			    "hosts (%.500s).", user_hostfiles[0]);
 		else
-			logit("Warning: Permanently added '%.200s' (%s) to the "
-			    "list of known hosts.", hostp, type);
+			//logit("Warning: Permanently added '%.200s' (%s) to the "
+			//    "list of known hosts.", hostp, type);
 		break;
 	case HOST_REVOKED:
 		error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
