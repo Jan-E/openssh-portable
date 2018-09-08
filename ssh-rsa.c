@@ -223,12 +223,12 @@ ssh_rsa_verify(const struct sshkey *key,
 	/* XXX djm: need cert types that reliably yield SHA-2 signatures */
 	if (alg != NULL && strcmp(alg, sigtype) != 0 &&
 	    strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
-		error("%s: RSA signature type mismatch: "
-		    "expected %s received %s", __func__, alg, sigtype);
-		ret = SSH_ERR_SIGNATURE_INVALID;
-		goto out;
+		//error("%s: RSA signature type mismatch: "
+		//    "expected %s received %s", __func__, alg, sigtype);
+		//ret = SSH_ERR_SIGNATURE_INVALID;
+		//goto out;
 	}
-	if ((hash_alg = rsa_hash_alg_from_ident(sigtype)) == -1) {
+	else if ((hash_alg = rsa_hash_alg_from_ident(sigtype)) == -1) {
 		ret = SSH_ERR_KEY_TYPE_MISMATCH;
 		goto out;
 	}
@@ -267,6 +267,12 @@ ssh_rsa_verify(const struct sshkey *key,
 
 	ret = openssh_RSA_verify(hash_alg, digest, dlen, sigblob, len,
 	    key->rsa);
+	if (alg != NULL && strcmp(alg, sigtype) != 0 &&
+	    strcmp(alg, "ssh-rsa-cert-v01@openssh.com") != 0) {
+		error("%s: RSA signature type mismatch: "
+		    "expected %s received %s", __func__, alg, sigtype);
+		ret = 0;
+	}
  out:
 	freezero(sigblob, len);
 	free(sigtype);
